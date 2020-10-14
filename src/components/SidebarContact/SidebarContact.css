@@ -1,0 +1,41 @@
+.sidebarContact{
+    display: flex;
+    padding: 20px;
+    cursor: pointer;
+    border-bottom: none;
+    position: relative;
+}
+.sidebarContact:hover{
+    background-color: #ebebeb;
+}
+
+.sidebarContact__info>h2{
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.sidebarContact__info{
+    margin-left: 15px;
+}
+
+.sidebarContact:active{
+    border: 1px solid green;
+}
+
+.active{
+   border: 1px solid green;
+   background-color: greenyellow;
+}
+.none{
+    position: absolute;
+    right: 18px;
+    top: 33px;
+    display: none;
+}
+
+.dis{
+    position: absolute;
+    right: 18px;
+    top: 33px;
+    display: block;
+}

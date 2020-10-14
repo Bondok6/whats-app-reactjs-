@@ -9,9 +9,8 @@
 /coverage
 
 # production
-src
-/src
-/public
+/build
+
 # misc
 .DS_Store
 .env.local
