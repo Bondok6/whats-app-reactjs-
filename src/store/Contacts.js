@@ -21,7 +21,7 @@ export const contactsFail=(error)=>{
 export const fetchContacts= (token)=>{
     return async dispatch=>{
         dispatch(start())
-      const res= await Axios.get('/users?paginate=false',{
+      const res= await Axios.get('/contacts?paginate=false',{
             headers:{
                 "authorization":`Bearer ${localStorage.getItem("token")}`,
             }
