@@ -129,27 +129,14 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
             }
           }
         } else {
-          /*  if (smsId.current) {
-            if (id.toString() === smsId.current.toString()) {
-              
-              let im = document.querySelector(`.${id}`);
-              return im.setAttribute("style", "background-color:#dcf8c6");
-            }else{ */
-         /*  let im = document.querySelector(`.${id}`);
-          console.log(im);
-          if (im) {
-            im.setAttribute("style", "display:none");
-          } */
+
           if(userId !== sender){
             let recieved = false;
-          /*   recieved = userId === sender ? true : false; */
             var body = document.querySelector("#body");
             let p = chatMessage(data, recieved, "", id);
             body.append(p);
           }
 
-          /*  } */
-          /* } */
         }
       });
     }
