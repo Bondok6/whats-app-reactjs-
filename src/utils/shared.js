@@ -26,7 +26,6 @@ export function chatMessage(data, recieved, img, id = "id") {
     recieved
       ? p.setAttribute("class", `chat__message chat__reciever ${id}`)
       : p.setAttribute("class", "chat__message");
-    /*  p = document.createElement("h1"), */
     p.appendChild(span);
     return p;
   } else if (data.endsWith("wav") || data.endsWith("mp3") || img === "voice") {
@@ -40,19 +39,17 @@ export function chatMessage(data, recieved, img, id = "id") {
     recieved
       ? p.setAttribute("class", `chat__message chat__reciever ${id}`)
       : p.setAttribute("class", "chat__message");
-    /*  p = document.createElement("h1"), */
     p.appendChild(span);
     return p;
   } else {
     p = document.createElement("p");
     p.setAttribute("key", id);
-
+    if (img === "sms") p.setAttribute("style", "background-color:#dcf8c6");
     recieved
-      ? p.setAttribute("class", "chat__message chat__reciever")
+      ? p.setAttribute("class", `chat__message chat__reciever ${id}`)
       : p.setAttribute("class", "chat__message");
-    /*  p = document.createElement("h1"), */
-    p.appendChild(span);
     p.textContent = data;
+    p.appendChild(span);
     return p;
   }
 }

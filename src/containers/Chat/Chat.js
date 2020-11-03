@@ -1,8 +1,5 @@
 import { Avatar, Button, IconButton } from "@material-ui/core";
-import {
-  AttachFile,
-  InsertEmoticon
-} from "@material-ui/icons";
+import { AttachFile, InsertEmoticon } from "@material-ui/icons";
 import { connect } from "react-redux";
 import { chatMessage } from "../../utils/shared";
 import React, { useEffect, useState, useRef } from "react";
@@ -12,7 +9,7 @@ import MicRecorder from "mic-recorder-to-mp3";
 import StopIcon from "@material-ui/icons/Stop";
 import * as actions from "../../store/index";
 import Axios from "../../axios";
-import WithErrorHanler from '../../components/withErrorHandler/withErrorHandler'
+import WithErrorHanler from "../../components/withErrorHandler/withErrorHandler";
 import Picker, { SKIN_TONE_MEDIUM_DARK } from "emoji-picker-react";
 import Spiner from "../../components/Spiner/Spiner";
 
@@ -34,10 +31,7 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
   const setId = useRef();
   const voiceSender = useRef();
   const setIdVoice = useRef();
-
-
-
- 
+  const smsId = useRef();
 
   useEffect(() => {
     navigator.getUserMedia(
@@ -50,11 +44,9 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
       }
     );
   }, []);
-  
 
   const sendMessage = (e) => {
     e.preventDefault();
-   
 
     var sms = document.querySelector("#sms");
     const formData = new FormData();
@@ -75,15 +67,11 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
       emoji.current.style.display = "inline-block";
       ida.current.style.display = "inline-block";
     } else if (photo.current) {
-      /* console.log(setId.current); */
-
       formData.append("photo", photo.current);
       formData.append("setId", setId.current);
-
       let body = document.querySelector("#body");
       let p = chatMessage(photoSender.current, true, "img", setId.current);
       body.append(p);
-
       send.current.style.display = "none";
       inImage.current.style.display = "none";
       micStart.current.style.display = "inline-block";
@@ -91,22 +79,27 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
       ida.current.style.display = "inline-block";
     } else {
       formData.append("message", sms.value);
+      formData.append("setId", smsId.current);
+      let body = document.querySelector("#body");
+      let p = chatMessage(sms.value, true, "sms", smsId.current);
+      body.append(p);
       micStart.current.style.display = "inline-block";
       inImage.current.style.display = "inline-block";
     }
     formData.append("sender", userId);
     formData.append("room", id);
-    Axios.post("/message", formData);
+    console.log(sms.value,userId,id)
+    sms.value ? socket.emit("message",sms.value, userId, id) : Axios.post("/message", formData);
+  
     sms.value = "";
     var imgtag = document.getElementById("img");
     imgtag.setAttribute("class", "hidden");
     audi.current = null;
     photo.current = null;
-    body.scrollTo({top:100000,behavior:'smooth'})
+    body.scrollTo({ top: 10000000000000, behavior: "smooth" });
   };
 
   useEffect(() => {
-
     if (socket) {
       socket.on("sent", (data, sender, r, id) => {
         if (
@@ -115,36 +108,49 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
           data.endsWith("PNG") ||
           data.endsWith("JPG")
         ) {
-          if( inImage.current){
-          inImage.current.style.display = "inline-block";
-        }
-          if(id&&setId.current){
-          if (id.toString() === setId.current.toString()) {
-            let im = document.querySelector(`.${id.toString()}`);
+          if (inImage.current) {
+            inImage.current.style.display = "inline-block";
+          }
+          if (id && setId.current) {
+            if (id.toString() === setId.current.toString()) {
+              let im = document.querySelector(`.${id.toString()}`);
 
-            
-            return im.setAttribute("style", "background-color:green");
+              return im.setAttribute("style", "background-color:#dcf8c6");
+            }
           }
-        }
         } else if (data.endsWith("mp3") || data.endsWith("wav")) {
-          if(micStart.current){
-          micStart.current.style.display = "inline-block";}
-          if(id&&setIdVoice.current){
-          if (id.toString() === setIdVoice.current.toString()) {
-            let im = document.querySelector(`.${id.toString()}`);
-            return im.setAttribute("style", "background-color:green");
+          if (micStart.current) {
+            micStart.current.style.display = "inline-block";
           }
+          if (id && setIdVoice.current) {
+            if (id.toString() === setIdVoice.current.toString()) {
+              let im = document.querySelector(`.${id.toString()}`);
+              return im.setAttribute("style", "background-color:#dcf8c6");
+            }
+          }
+        } else {
+          /*  if (smsId.current) {
+            if (id.toString() === smsId.current.toString()) {
+              
+              let im = document.querySelector(`.${id}`);
+              return im.setAttribute("style", "background-color:#dcf8c6");
+            }else{ */
+         /*  let im = document.querySelector(`.${id}`);
+          console.log(im);
+          if (im) {
+            im.setAttribute("style", "display:none");
+          } */
+          if(userId !== sender){
+            let recieved = false;
+          /*   recieved = userId === sender ? true : false; */
+            var body = document.querySelector("#body");
+            let p = chatMessage(data, recieved, "", id);
+            body.append(p);
+          }
+
+          /*  } */
+          /* } */
         }
-        }
-      
-        
-        let recieved = false;
-        recieved = userId === sender ? true : false;
-        var body = document.querySelector("#body");
-        let p = chatMessage(data, recieved, "", id);
-        body.append(p);
-       
-         
       });
     }
   }, [socket, userId]);
@@ -168,9 +174,8 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
           let recieved = false;
           recieved = parseInt(userId) === r.sender ? true : false;
 
-            body.scrollTo({top:100000,behavior:'smooth'})
-           
-          
+          body.scrollTo({ top: 100000, behavior: "smooth" });
+
           return body.append(chatMessage(r.message, recieved, r.id));
         });
       }
@@ -251,7 +256,6 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
     }
   };
 
-
   let foot = null;
   if (id) {
     foot = (
@@ -276,7 +280,15 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
             ref={ida}
             onChange={inText}
           />
-          <button onClick={sendMessage} type="submit">
+          <button
+            onClick={(event) => {
+              event.preventDefault();
+/*               let s = new Date().getTime().toString();
+              smsId.current = `ma${s}`; */
+              return sendMessage(event);
+            }}
+            type="submit"
+          >
             Send a message
           </button>
 
@@ -328,7 +340,6 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
                         setId.current = `a${s}`;
                       };
                       reader.readAsDataURL(selectedFile);
-                      
                     }
                     // console.log(event.target.files[0],photo.current)
                     if (event.target.files[0]) {
@@ -358,7 +369,7 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
                   var reader = new FileReader();
                   var imgtag = document.getElementById("img");
                   imgtag.title = selectedFile.name;
-                  console.log("geg")
+                  console.log("geg");
                   reader.onload = function (event) {
                     imgtag.src = event.target.result;
                     photoSender.current = event.target.result;
@@ -381,7 +392,7 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
       </div>
     );
   }
-  
+
   let content = <Spiner />;
   if (!loadRoom) {
     content = (
@@ -390,12 +401,8 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
       </div>
     );
   }
- 
-
-
 
   return (
-    
     <div className="chat">
       <div className="chat__header">
         <Avatar />
@@ -408,15 +415,13 @@ function Chat({ socket, userId, id, room, loadRoom, roomName, friends }) {
               : ""}
           </p>
         </div>
-        <div className="chat__headerRight">
-         
-        </div>
+        <div className="chat__headerRight"></div>
       </div>
 
       {content}
 
       {foot}
-        </div>
+    </div>
   );
 }
 
@@ -438,4 +443,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default WithErrorHanler(connect(mapStateToProps, mapDispatchToProps)(Chat),Axios);
+export default WithErrorHanler(
+  connect(mapStateToProps, mapDispatchToProps)(Chat),
+  Axios
+);
