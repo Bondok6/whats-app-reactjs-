@@ -89,7 +89,7 @@ class SignIn extends Component {
             <div className="row m-5 m-5 m-5">
               <div className="col-4"></div>
               <form className="form-signin">
-                <h1 className="h3 mb-3 font-weight-normal">Please sign ip</h1>
+                <h1 className="h3 mb-3 font-weight-normal">Please sign up</h1>
                 {form}
 
                 <button
